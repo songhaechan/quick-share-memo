@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class NoteApp extends StatelessWidget {
+  const NoteApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,7 +90,7 @@ class NoteCard extends StatelessWidget {
   final String title;
   final String date;
 
-  const NoteCard({required this.title, required this.date});
+  const NoteCard({super.key, required this.title, required this.date});
 
   @override
   Widget build(BuildContext context) {
