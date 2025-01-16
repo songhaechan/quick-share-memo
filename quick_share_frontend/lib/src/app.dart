@@ -10,6 +10,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      theme: ThemeData(
+        appBarTheme: const AppBarTheme(
+          color: Colors.black,
+          titleTextStyle: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+          iconTheme: IconThemeData(color: Colors.white), // 뒤로가기 버튼 색상
+          centerTitle: true,
+        ),
+      ),
       debugShowCheckedModeBanner: false,
       routes: {
         '/': (context) => LoginScreen(),

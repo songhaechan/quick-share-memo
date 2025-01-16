@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/get_navigation.dart';
+import 'package:quick_share_frontend/src/screen/auth/Login.dart';
 
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
@@ -50,6 +53,7 @@ class RegisterScreen extends StatelessWidget {
                 // 회원가입 로직 추가
               },
               style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
               child: const Text(
@@ -60,6 +64,12 @@ class RegisterScreen extends StatelessWidget {
                 ),
               ),
             ),
+            SizedBox(
+              height: 16,
+            ),
+            TextButton(
+                child: Text('이미 계정이 있으신가요? 로그인'),
+                onPressed: () => Get.to(() => const LoginScreen())),
           ],
         ),
       ),

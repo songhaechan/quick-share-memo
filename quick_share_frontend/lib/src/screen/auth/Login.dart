@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/get_navigation.dart';
+import 'package:quick_share_frontend/src/screen/auth/Register.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -73,19 +76,10 @@ class LoginScreen extends StatelessWidget {
               children: [
                 TextButton(
                   onPressed: () {
-                    // 회원가입 버튼 동작
+                    Get.to(() => const RegisterScreen());
                   },
                   child: Text(
                     "회원가입",
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    // 아이디/비밀번호 찾기 버튼 동작
-                  },
-                  child: Text(
-                    "아이디/비밀번호 찾기",
                     style: TextStyle(color: Colors.black),
                   ),
                 ),
