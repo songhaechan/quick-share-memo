@@ -1,10 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/get_instance.dart';
 import 'package:get/get_navigation/get_navigation.dart';
+import 'package:quick_share_frontend/src/controller/AuthController.dart';
+import 'package:quick_share_frontend/src/screen/MemeList.dart';
 import 'package:quick_share_frontend/src/screen/auth/Register.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final authController = Get.put(AuthController());
+  final _idController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  _submit() async {
+    bool result = await authController.login(
+      _idController.text,
+      _passwordController.text,
+    );
+    if (result) {
+      Get.offAll(() => const NoteApp());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,9 +76,7 @@ class LoginScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  // 로그인 버튼 동작
-                },
+                onPressed: _submit,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
                   padding: EdgeInsets.symmetric(vertical: 16),

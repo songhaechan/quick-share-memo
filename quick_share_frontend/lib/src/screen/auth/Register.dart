@@ -1,10 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/get_instance.dart';
 import 'package:get/get_navigation/get_navigation.dart';
+import 'package:quick_share_frontend/src/controller/AuthController.dart';
+import 'package:quick_share_frontend/src/screen/MemeList.dart';
 import 'package:quick_share_frontend/src/screen/auth/Login.dart';
 
-class RegisterScreen extends StatelessWidget {
+class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
+
+  @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
+  final authController = Get.put(AuthController());
+  final _idController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  _submit() async {
+    bool result = await authController.register(
+      _idController.text,
+      _passwordController.text,
+    );
+    if (result) {
+      Get.offAll(() => const NoteApp());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,9 +71,7 @@ class RegisterScreen extends StatelessWidget {
             ),
             const SizedBox(height: 32),
             ElevatedButton(
-              onPressed: () {
-                // 회원가입 로직 추가
-              },
+              onPressed: _submit,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
                 padding: const EdgeInsets.symmetric(vertical: 16),
