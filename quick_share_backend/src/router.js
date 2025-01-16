@@ -20,14 +20,8 @@ router.get("/page/:route", webController.page);
 router.post("/file", upload.single("file"), fileController.upload);
 router.get("/file/:id", fileController.download);
 
-router.post("/auth/phone", apiUserController.phone);
-router.put("/auth/phone", apiUserController.phoneVerify);
-
 router.post("/auth/register", apiUserController.register);
 router.post("/auth/login", apiUserController.login);
-
-router.get("/api/user/my", auth, apiUserController.show);
-router.post("/api/user/my", auth, apiUserController.update);
 
 router.get("/api/feed", auth, apiFeedController.index);
 router.post("/api/feed", auth, apiFeedController.store);

@@ -47,6 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             SizedBox(height: 48),
             TextField(
+              controller: _idController,
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.person),
                 hintText: "아이디를 입력하세요",
@@ -61,6 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
             SizedBox(height: 16),
             TextField(
               obscureText: true,
+              controller: _passwordController,
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.lock),
                 hintText: "비밀번호를 입력하세요",

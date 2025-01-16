@@ -1,21 +1,21 @@
 const { pool } = require("../../../database/index");
-exports.register = async (phone, password, name) => {
+exports.register = async (id, password) => {
   const query = `INSERT INTO user
-(phone, password, name)
-VALUES (?,?,?)`;
-  return await pool.query(query, [phone, password, name]);
+(login_id, password)
+VALUES (?,?)`;
+  return await pool.query(query, [id, password]);
 };
-exports.login = async (phone, password) => {
+exports.login = async (loginId, password) => {
   const query = `SELECT * FROM user WHERE
-phone = ? AND password = ?`;
-  let result = await pool.query(query, [phone, password]);
+login_id = ? AND password = ?`;
+  let result = await pool.query(query, [loginId, password]);
   return result.length < 0 ? null : result[0];
 };
-exports.findByPhone = async (phone) => {
+exports.findByLoginId = async (loginId) => {
   let result = await pool.query(
     `SELECT count(*) count FROM user
-where phone = ?`,
-    [phone]
+where login_id = ?`,
+    [loginId]
   );
   return result.length < 0 ? null : result[0];
 };
