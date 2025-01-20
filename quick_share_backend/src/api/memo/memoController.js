@@ -3,16 +3,12 @@ const MemoRepository = require("../memo/repository/memoRepository"); // MemoRepo
 class MemoController {
   // Memo 생성
   async createMemo(req, res) {
-    try {
-      print(req);
-      const { title, content } = req.body;
-      const newMemo = await MemoRepository.createMemo(title, content);
-      res.status(201).json({
-        message: "Memo created successfully",
-        data: newMemo,
-      });
-    } catch (error) {
-      res.status(500).json({ message: "Error creating memo", error });
+    const { title, content } = req.body;
+    const result = await MemoRepository.createMemo(title, content);
+    if (result.affectedRows > 0) {
+      res.send({ result: "ok", data: result.insertId });
+    } else {
+      res.send({ result: "fail", message: "오류가 발생하였습니다." });
     }
   }
 
