@@ -5,6 +5,8 @@ import 'package:get/get_navigation/get_navigation.dart';
 import 'package:quick_share_frontend/src/controller/AuthController.dart';
 import 'package:quick_share_frontend/src/screen/MemeList.dart';
 import 'package:quick_share_frontend/src/screen/auth/Register.dart';
+import 'package:quick_share_frontend/src/screen/feed/index.dart';
+import 'package:quick_share_frontend/src/screen/memo/Create.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -24,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _passwordController.text,
     );
     if (result) {
-      Get.offAll(() => const NoteApp());
+      Get.offAll(() => FeedIndex());
     }
   }
 
