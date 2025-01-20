@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:quick_share_frontend/src/screen/auth/Login.dart';
 import 'package:quick_share_frontend/src/screen/auth/Register.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:quick_share_frontend/src/screen/memo/Create.dart';
+import 'package:quick_share_frontend/src/screen/memo/Show.dart';
 
 class MyApp extends StatelessWidget {
   final bool isLogin;
@@ -24,7 +26,7 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       routes: {
-        '/': (context) => LoginScreen(),
+        '/': (context) => Create(),
         '/register': (context) => RegisterScreen(),
       },
       initialRoute: '/',
