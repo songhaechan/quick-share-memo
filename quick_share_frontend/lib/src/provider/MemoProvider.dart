@@ -31,7 +31,7 @@ class MemoProvider extends Provider {
 
     print("body is $body");
     final response = await post('/api/memo', body);
-    print("response is $response");
+    print("response is ${response.body}");
 
     return response.body; // body로 응답 반환
   }

@@ -6,19 +6,19 @@ class MemoController extends GetxController {
   final memoProvider = Get.put(MemoProvider());
   RxList<MemoModel> feedList = <MemoModel>[].obs;
 
-  // Memo 조회 (페이징 처리)
-  Future<void> memoIndex({int page = 1}) async {
-    Map json = await memoProvider.index(page);
-    List<MemoModel> tmp =
-        json['data'].map<MemoModel>((m) => MemoModel.parse(m)).toList();
-    (page == 1) ? feedList.assignAll(tmp) : feedList.addAll(tmp);
-  }
+  // // Memo 조회 (페이징 처리)
+  // Future<void> memoIndex({int page = 1}) async {
+  //   Map json = await memoProvider.index(page);
+  //   List<MemoModel> tmp =
+  //       json['data'].map<MemoModel>((m) => MemoModel.parse(m)).toList();
+  //   (page == 1) ? feedList.assignAll(tmp) : feedList.addAll(tmp);
+  // }
 
   // Memo 생성
   Future<bool> createMemo(String title, String content) async {
     Map response = await memoProvider.store(title, content);
     if (response['result'] == 'ok') {
-      await memoIndex(); // 생성 후 목록 새로 가져오기
+      // await memoIndex(); // 생성 후 목록 새로 가져오기
       return true;
     } else {
       Get.snackbar('Error', response['message'],
@@ -31,7 +31,7 @@ class MemoController extends GetxController {
   Future<bool> updateMemo(int id, String title, String content) async {
     Map response = await memoProvider.update(id, title, content);
     if (response['result'] == 'ok') {
-      await memoIndex(); // 수정 후 목록 새로 가져오기
+      // await memoIndex(); / / 수정 후 목록 새로 가져오기
       return true;
     } else {
       Get.snackbar('Error', response['message'],

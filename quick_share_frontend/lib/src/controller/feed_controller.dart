@@ -1,27 +1,100 @@
-import 'package:quick_share_frontend/src/model/feed_model.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:quick_share_frontend/src/model/feed_model.dart';
+import 'package:quick_share_frontend/src/provider/feed_provider.dart';
 
-import '../provider/feed_provider.dart';
-
-/// 피드 데이터를 관리하는 컨트롤러 클래스
 class FeedController extends GetxController {
-  /// 피드 API 요청을 처리하는 Provider 인스턴스
+  RxBool isPersonalMemo = true.obs; // 개인 메모 상태
+  RxString sortCriteria = 'name'.obs; // 정렬 기준
+  RxList<FeedModel> feedList = <FeedModel>[].obs; // 필터링된 메모 리스트
+  RxList<FeedModel> originalFeedList = <FeedModel>[].obs; // 원본 메모 리스트
+  RxBool isLoading = false.obs; // 로딩 상태
+  RxString searchQuery = ''.obs; // 검색어 상태
+  TextEditingController searchController = TextEditingController(); // 검색 입력 상태
   final feedProvider = Get.put(FeedProvider());
 
-  /// 피드 목록을 저장하는 Observable 리스트
-  RxList<FeedModel> feedList = <FeedModel>[].obs;
+  @override
+  void onInit() {
+    super.onInit();
+    fetchFeedData(); // 초기 데이터 로드
+  }
 
-  /// 기존 피드 데이터를 업데이트하는 메서드
-  /// [newData] 업데이트할 새로운 피드 데이터
-  void updateData(FeedModel newData) {
-    final index = feedList.indexWhere((item) => item.id == newData.id);
-    if (index != -1) {
-      feedList[index] = newData;
+  // 개인/공유 메모 토글
+  void toggleMemoList() {
+    isPersonalMemo.value = !isPersonalMemo.value;
+    filterFeeds(searchQuery.value);
+  }
+
+  // 정렬
+  void sortMemos(String criteria) {
+    sortCriteria.value = criteria;
+    if (criteria == 'name') {
+      feedList.sort((a, b) => a.title.compareTo(b.title));
+    } else {
+      feedList.sort((a, b) => b.date.compareTo(a.date));
     }
   }
 
-  /// 서버로부터 피드 목록을 가져오는 메서드
-  /// [page] 가져올 페이지 번호 (기본값: 1)
+  // 데이터 가져오기
+  void fetchFeedData() async {
+    isLoading.value = true;
+    try {
+      // 테스트 데이터
+      originalFeedList.assignAll([
+        FeedModel.parse({
+          'id': 1,
+          'date': '2025-01-01',
+          'title': '테스트 메모 1',
+          'content': '이것은 테스트 메모 1의 내용입니다.',
+          'is_personal': 1,
+        }),
+        FeedModel.parse({
+          'id': 2,
+          'date': '2025-01-02',
+          'title': '공유된 메모 1',
+          'content': '공유된 테스트 메모 1의 내용입니다.',
+          'is_personal': 0,
+        }),
+        FeedModel.parse({
+          'id': 3,
+          'date': '2025-02-01',
+          'title': '테스트 메모 2',
+          'content': '이것은 테스트 메모 2의 내용입니다.',
+          'is_personal': 1,
+        }),
+        FeedModel.parse({
+          'id': 4,
+          'date': '2025-01-07',
+          'title': '공유된 메모 2',
+          'content': '공유된 테스트 메모 2의 내용입니다.',
+          'is_personal': 0,
+        }),
+      ]);
+      filterFeeds(''); // 초기 필터링
+    } catch (e) {
+      print('데이터 로드 실패: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // 검색 및 필터링
+  void filterFeeds(String query) {
+    searchQuery.value = query;
+    if (query.isEmpty) {
+      feedList.assignAll(
+        originalFeedList.where((memo) =>
+            isPersonalMemo.value ? memo.isPersonal : !memo.isPersonal),
+      );
+    } else {
+      feedList.assignAll(
+        originalFeedList.where((memo) =>
+            (isPersonalMemo.value ? memo.isPersonal : !memo.isPersonal) &&
+            memo.title.toLowerCase().contains(query.toLowerCase())),
+      );
+    }
+  }
+
   Future<void> feedIndex({int page = 1}) async {
     Map json = await feedProvider.getList(page: page);
     List<FeedModel> tmp =

@@ -26,7 +26,7 @@ router.use(logRequestTime);
 router.post("/auth/register", apiUserController.register);
 router.post("/auth/login", apiUserController.login);
 
-// router.get("/api/feed", auth, apiFeedController.index);
+router.get("/api/feed", auth, apiFeedController.index);
 // router.post("/api/feed", auth, apiFeedController.store);
 // router.get("/api/feed/:id", auth, apiFeedController.show);
 // router.put("/api/feed/:id", auth, apiFeedController.update);

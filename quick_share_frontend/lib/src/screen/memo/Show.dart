@@ -94,7 +94,7 @@ class _ShowState extends State<Show> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
-            Get.to(() => const FeedIndex());
+            Get.to(() => FeedIndex());
           },
         ),
         title: Row(

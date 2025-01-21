@@ -3,7 +3,6 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/get_instance.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:quick_share_frontend/src/controller/AuthController.dart';
-import 'package:quick_share_frontend/src/screen/MemeList.dart';
 import 'package:quick_share_frontend/src/screen/auth/Login.dart';
 
 class RegisterScreen extends StatefulWidget {

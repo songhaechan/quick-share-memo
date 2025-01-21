@@ -5,6 +5,7 @@ import 'package:get/get_navigation/get_navigation.dart';
 import 'package:quick_share_frontend/src/controller/MemoController.dart';
 import 'package:quick_share_frontend/src/model/MemoModel.dart';
 import 'package:quick_share_frontend/src/screen/feed/index.dart';
+import 'package:quick_share_frontend/src/screen/note_app.dart';
 
 class Create extends StatefulWidget {
   @override
@@ -39,7 +40,7 @@ class _CreateState extends State<Create> {
     final result = await memoController.createMemo(
         titleController.text, textController.text);
     if (result) {
-      Get.to(() => const FeedIndex());
+      Get.offAll(() => NoteApp());
     }
   }
 
@@ -64,12 +65,6 @@ class _CreateState extends State<Create> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 1,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Get.to(() => const FeedIndex());
-          },
-        ),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),

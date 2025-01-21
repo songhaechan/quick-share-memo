@@ -6,7 +6,6 @@ exports.index = async (req, res) => {
   const items = await repository.index(page, size, trimmedKeyword);
   const modifiedItems = items.map((item) => ({
     ...item,
-    is_me: userId == item.user_id,
   }));
   res.json({ result: "ok", data: modifiedItems });
 };
