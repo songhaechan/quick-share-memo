@@ -7,6 +7,7 @@ exports.index = async (req, res) => {
   const modifiedItems = items.map((item) => ({
     ...item,
   }));
+  console.log(items);
   res.json({ result: "ok", data: modifiedItems });
 };
 

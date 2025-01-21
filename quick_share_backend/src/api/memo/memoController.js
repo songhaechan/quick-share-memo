@@ -54,13 +54,15 @@ class MemoController {
   async updateMemo(req, res) {
     const { id } = req.params;
     const { title, content } = req.body;
+    console.log(id, title, content);
     try {
       const updatedMemo = await MemoRepository.updateMemo(id, title, content);
+      console.log(updatedMemo);
       if (!updatedMemo) {
         return res.send({ message: "Memo not found or not modified" });
       }
-      res.status(200).json({
-        message: "Memo updated successfully",
+      res.send({
+        result: "ok",
         data: updatedMemo,
       });
     } catch (error) {
@@ -76,8 +78,8 @@ class MemoController {
       if (!deletedMemo) {
         return res.send({ message: "Memo not found or not deleted" });
       }
-      res.status(200).json({
-        message: "Memo deleted successfully",
+      res.send({
+        result: "ok",
         data: deletedMemo,
       });
     } catch (error) {
@@ -90,15 +92,15 @@ class MemoController {
     const { id } = req.params;
     try {
       const sharedMemo = await MemoRepository.shareMemo(id);
-      if (!deletedMemo) {
-        return res.send({ message: "Memo not found or not deleted" });
+      if (!sharedMemo) {
+        return res.send({ message: "Memo not found or not shared" });
       }
-      res.status(200).json({
-        message: "Memo deleted successfully",
+      res.send({
+        result: "ok",
         data: sharedMemo,
       });
     } catch (error) {
-      res.status(500).json({ message: "Error deleting memo", error });
+      res.status(500).json({ message: "Error sharing memo", error });
     }
   }
 }

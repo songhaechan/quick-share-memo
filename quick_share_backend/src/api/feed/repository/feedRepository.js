@@ -1,7 +1,7 @@
 const { pool } = require("../../../database");
 exports.index = async (page, size, keyword, userId) => {
   const offset = (page - 1) * size;
-  let query = `SELECT * 
+  let query = `SELECT memos.*, u.id as user_id 
   FROM memos 
   LEFT JOIN user u ON u.id = memos.user_id WHERE memos.user_id = ?`;
 
