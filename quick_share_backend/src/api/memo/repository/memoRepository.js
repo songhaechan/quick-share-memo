@@ -35,7 +35,9 @@ exports.deleteMemo = async (id) => {
 };
 
 exports.shareMemo = async (id) => {
-  const query = `UPDATE memos SET isOpened = true`;
-  const result = await pool.query(query);
+  const query = `UPDATE memos SET isOpened = true WHERE id = ?`;
+  console.log(id);
+  const result = await pool.query(query, [id]);
+  console.log(result);
   return result.affectedRows > 0; // 삭제된 행의 수로 성공 여부 판단
 };

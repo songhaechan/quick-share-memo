@@ -18,6 +18,42 @@ LOWER(memos.content) LIKE ?`;
   return await pool.query(query, params);
 };
 
+exports.privateSearch = async (page, size, keyword, userId) => {
+  const offset = (page - 1) * size;
+  let query = `SELECT memos.*, u.id as user_id 
+  FROM memos 
+  LEFT JOIN user u ON u.id = memos.user_id WHERE memos.user_id = ?`;
+
+  const params = [`${userId}`];
+  if (keyword) {
+    query += ` AND memos.title LIKE ? OR memos.content LIKE ?`;
+    const keywordParam = `%${keyword}%`;
+    params.push(keywordParam, keywordParam);
+  }
+  query += ` ORDER BY memos.id DESC LIMIT ? OFFSET ?`;
+  params.push(`${size}`, `${offset}`);
+  console.log(size, offset);
+  return await pool.query(query, params);
+};
+
+exports.sharedSearch = async (page, size, keyword, userId) => {
+  const offset = (page - 1) * size;
+  let query = `SELECT memos.*, u.id as user_id 
+  FROM memos 
+  LEFT JOIN user u ON u.id = memos.user_id WHERE isOpened = true`;
+
+  const params = [];
+  if (keyword) {
+    query += ` AND memos.title LIKE ? OR memos.content LIKE ?`;
+    const keywordParam = `%${keyword}%`;
+    params.push(keywordParam, keywordParam);
+  }
+  query += ` ORDER BY memos.id DESC LIMIT ? OFFSET ?`;
+  params.push(`${size}`, `${offset}`);
+  console.log(size, offset);
+  return await pool.query(query, params);
+};
+
 exports.openIndex = async (page, size, keyword) => {
   const offset = (page - 1) * size;
   let query = `SELECT * 
@@ -26,8 +62,7 @@ exports.openIndex = async (page, size, keyword) => {
 
   const params = [];
   if (keyword) {
-    query += ` WHERE LOWER(memos.title) LIKE ? OR
-LOWER(memos.content) LIKE ?`;
+    query += ` WHERE memos.title LIKE ? OR memos.content LIKE ?`;
     const keywordParam = `%${keyword}%`;
     params.push(keywordParam, keywordParam);
   }
