@@ -13,7 +13,10 @@ class FeedListItem extends StatelessWidget {
     return InkWell(
       onTap: () {
         Get.to(() => Show(
-            title: item.title, content: item.content, createdAt: item.date));
+            id: item.id,
+            title: item.title,
+            content: item.content,
+            createdAt: item.date));
       },
       child: Stack(
         children: [
