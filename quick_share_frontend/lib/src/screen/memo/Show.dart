@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/get_navigation.dart';
+import 'package:intl/intl.dart'; // 날짜 포맷을 위한 패키지 추가
+import 'package:quick_share_frontend/src/screen/feed/index.dart';
 
 class Show extends StatefulWidget {
+  final String title;
+  final String content;
+  final String createdAt; // 서버에서 받은 날짜를 매개변수로 전달
+
+  Show({required this.title, required this.content, required this.createdAt});
+
   @override
   _ShowState createState() => _ShowState();
 }
@@ -71,6 +81,11 @@ class _ShowState extends State<Show> {
 
   @override
   Widget build(BuildContext context) {
+    // 서버에서 받은 createdAt을 DateTime으로 변환
+    DateTime date = DateTime.parse(widget.createdAt);
+    // 원하는 날짜 형식으로 포맷
+    String formattedDate = DateFormat('yyyy.MM.dd').format(date);
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
@@ -78,7 +93,9 @@ class _ShowState extends State<Show> {
         elevation: 1,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {},
+          onPressed: () {
+            Get.to(() => const FeedIndex());
+          },
         ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -96,13 +113,14 @@ class _ShowState extends State<Show> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // 서버에서 가져온 날짜를 표시
             Text(
-              '2024.01.16',
+              formattedDate, // 포맷된 날짜 표시
               style: TextStyle(color: Colors.grey[500], fontSize: 14),
             ),
             SizedBox(height: 8),
             Text(
-              '제목 2',
+              widget.title,
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.w500,
@@ -111,7 +129,7 @@ class _ShowState extends State<Show> {
             ),
             SizedBox(height: 16),
             Text(
-              '다른 메모를 작성해보았습니다.\n새로운 내용으로 구성된 메모입니다.\n이렇게 여러 줄로 구성할 수 있습니다.',
+              widget.content,
               style: TextStyle(fontSize: 16, color: Colors.grey[700]),
             ),
           ],

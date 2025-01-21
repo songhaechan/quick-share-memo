@@ -4,6 +4,7 @@ import 'package:get/get_instance/get_instance.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:quick_share_frontend/src/controller/MemoController.dart';
 import 'package:quick_share_frontend/src/model/MemoModel.dart';
+import 'package:quick_share_frontend/src/screen/feed/index.dart';
 
 class Create extends StatefulWidget {
   @override
@@ -36,12 +37,10 @@ class _CreateState extends State<Create> {
 
   _submit() async {
     final result = await memoController.createMemo(
-      titleController.text,
-      textController.text,
-    );
-    // if (result) {
-    //   Get.back();
-    // }
+        titleController.text, textController.text);
+    if (result) {
+      Get.to(() => const FeedIndex());
+    }
   }
 
   void applyStyleToSelectedText() {
@@ -67,7 +66,9 @@ class _CreateState extends State<Create> {
         elevation: 1,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {},
+          onPressed: () {
+            Get.to(() => const FeedIndex());
+          },
         ),
       ),
       body: Padding(

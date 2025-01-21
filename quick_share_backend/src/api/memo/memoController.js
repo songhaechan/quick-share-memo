@@ -3,8 +3,15 @@ const MemoRepository = require("../memo/repository/memoRepository"); // MemoRepo
 class MemoController {
   // Memo 생성
   async createMemo(req, res) {
-    const { title, content } = req.body;
-    const result = await MemoRepository.createMemo(title, content);
+    console.log(req.body); // req.body를 찍어서 전달되는 값 확인
+    const { title, content, createdAt } = req.body;
+    const userId = req.user.id;
+    const result = await MemoRepository.createMemo(
+      title,
+      content,
+      createdAt,
+      userId
+    );
     if (result.affectedRows > 0) {
       res.send({ result: "ok", data: result.insertId });
     } else {
@@ -14,9 +21,10 @@ class MemoController {
 
   // Memo 조회 (모든 메모)
   async getAllMemos(req, res) {
+    const userId = req.user.id;
     try {
-      const memos = await MemoRepository.getAllMemos();
-      res.status(200).json({
+      const memos = await MemoRepository.getAllMemos(userId);
+      res.send({
         message: "Memos retrieved successfully",
         data: memos,
       });
@@ -33,7 +41,7 @@ class MemoController {
       if (!memo) {
         return res.status(404).json({ message: "Memo not found" });
       }
-      res.status(200).json({
+      res.send({
         message: "Memo retrieved successfully",
         data: memo,
       });
@@ -49,9 +57,7 @@ class MemoController {
     try {
       const updatedMemo = await MemoRepository.updateMemo(id, title, content);
       if (!updatedMemo) {
-        return res
-          .status(404)
-          .json({ message: "Memo not found or not modified" });
+        return res.send({ message: "Memo not found or not modified" });
       }
       res.status(200).json({
         message: "Memo updated successfully",
@@ -68,13 +74,28 @@ class MemoController {
     try {
       const deletedMemo = await MemoRepository.deleteMemo(id);
       if (!deletedMemo) {
-        return res
-          .status(404)
-          .json({ message: "Memo not found or not deleted" });
+        return res.send({ message: "Memo not found or not deleted" });
       }
       res.status(200).json({
         message: "Memo deleted successfully",
         data: deletedMemo,
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Error deleting memo", error });
+    }
+  }
+
+  // Memo 공유
+  async shareMemo(req, res) {
+    const { id } = req.params;
+    try {
+      const sharedMemo = await MemoRepository.shareMemo(id);
+      if (!deletedMemo) {
+        return res.send({ message: "Memo not found or not deleted" });
+      }
+      res.status(200).json({
+        message: "Memo deleted successfully",
+        data: sharedMemo,
       });
     } catch (error) {
       res.status(500).json({ message: "Error deleting memo", error });

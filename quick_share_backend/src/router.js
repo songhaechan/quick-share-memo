@@ -33,11 +33,12 @@ router.post("/auth/login", apiUserController.login);
 // router.delete("/api/feed/:id", auth, apiFeedController.delete);
 
 // Memo 관련 API 엔드포인트
-router.post("/api/memo", MemoController.createMemo); // 메모 생성
-router.get("/api/memo", MemoController.getAllMemos); // 모든 메모 조회
-router.get("/api/memo/:id", MemoController.getMemoById); // 특정 메모 조회
-router.put("/api/memo/:id", MemoController.updateMemo); // 메모 수정
-router.delete("/api/memo/:id", MemoController.deleteMemo); // 메모 삭제
+router.post("/api/memo", auth, MemoController.createMemo); // 메모 생성
+router.get("/api/memo", auth, MemoController.getAllMemos); // 모든 메모 조회
+router.get("/api/memo/:id", auth, MemoController.getMemoById); // 특정 메모 조회
+router.put("/api/memo/:id", auth, MemoController.updateMemo); // 메모 수정
+router.put("/api/memo/:id/share", auth, MemoController.shareMemo); // 메모 공유
+router.delete("/api/memo/:id", auth, MemoController.deleteMemo); // 메모 삭제
 
 router.post("/file", upload.single("file"), (req, res) => {
   console.log(req.file);
