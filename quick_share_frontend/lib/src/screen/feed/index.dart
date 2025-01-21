@@ -11,6 +11,7 @@ class FeedIndex extends StatefulWidget {
 
 class _FeedIndexState extends State<FeedIndex> {
   final FeedController feedController = Get.put(FeedController());
+  final TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
@@ -21,6 +22,10 @@ class _FeedIndexState extends State<FeedIndex> {
   Future<void> _onRefresh() async {
     _currentPage = 1;
     await feedController.feedIndex();
+  }
+
+  _submit() async {
+    feedController.search(searchController.text);
   }
 
   int _currentPage = 1;
@@ -54,16 +59,45 @@ class _FeedIndexState extends State<FeedIndex> {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    TextField(
-                      controller: feedController.searchController,
-                      onChanged: feedController.filterFeeds,
-                      decoration: InputDecoration(
-                        hintText: '메모의 이름을 검색',
-                        prefixIcon: Icon(Icons.search),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
+                    Row(
+                      children: [
+                        // 검색 필드
+                        Expanded(
+                          child: TextField(
+                            controller: feedController.searchController,
+                            onChanged: feedController.filterFeeds,
+                            decoration: InputDecoration(
+                              hintText: '메모의 이름을 검색',
+                              prefixIcon: Icon(Icons.search),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                        SizedBox(width: 8.0),
+                        // 검색 버튼
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.black, // 버튼 배경색
+                            padding: EdgeInsets.symmetric(
+                                vertical: 16.0, horizontal: 16.0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                          ),
+                          onPressed: () {
+                            // 검색 버튼 클릭 시 동작
+                            feedController
+                                .search(feedController.searchController.text);
+                          },
+                          child: Text(
+                            '검색',
+                            style:
+                                TextStyle(fontSize: 16.0, color: Colors.white),
+                          ),
+                        ),
+                      ],
                     ),
                     SizedBox(height: 8.0),
                     Row(

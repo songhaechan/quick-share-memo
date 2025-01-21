@@ -39,6 +39,35 @@ class FeedController extends GetxController {
     }
   }
 
+  void search(String keyword) async {
+    if (isPersonalMemo.value) {
+      Map json = await feedProvider.searchPrivate(keyword);
+      if (json['data'] == null || json['data'] is! List) {
+        print('Invalid data format: ${json['data']}');
+        return;
+      }
+
+      List<FeedModel> tmp = (json['data'] as List)
+          .map((item) => FeedModel.parse(item as Map<String, dynamic>))
+          .toList();
+
+      feedList.assignAll(tmp);
+    } else {
+      feedProvider.searchShared(keyword);
+      Map json = await feedProvider.searchPrivate(keyword);
+      if (json['data'] == null || json['data'] is! List) {
+        print('Invalid data format: ${json['data']}');
+        return;
+      }
+
+      List<FeedModel> tmp = (json['data'] as List)
+          .map((item) => FeedModel.parse(item as Map<String, dynamic>))
+          .toList();
+
+      feedList.assignAll(tmp);
+    }
+  }
+
   // 검색 및 필터링
   void filterFeeds(String query) {
     searchQuery.value = query;
