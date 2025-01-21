@@ -16,7 +16,23 @@ class FeedProvider extends Provider {
     };
 
     // 피드 목록 API 호출
-    Response response = await get('/api/memo', query: queryParameters);
+    Response response = await get('/api/feed', query: queryParameters);
+
+    log('Status Code: ${response.statusCode}');
+    log('Response Body: ${response.bodyString}');
+
+    // 응답 데이터를 반환
+    return response.body;
+  }
+
+  Future<Map> getOpenList({int page = 1}) async {
+    // 개인 메모와 공유받은 메모를 구분하기 위한 쿼리 파라미터
+    final queryParameters = {
+      'page': '$page',
+    };
+
+    // 피드 목록 API 호출
+    Response response = await get('/api/open/feed', query: queryParameters);
 
     log('Status Code: ${response.statusCode}');
     log('Response Body: ${response.bodyString}');

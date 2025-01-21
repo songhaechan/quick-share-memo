@@ -1,9 +1,28 @@
 const { pool } = require("../../../database");
-exports.index = async (page, size, keyword) => {
+exports.index = async (page, size, keyword, userId) => {
   const offset = (page - 1) * size;
   let query = `SELECT * 
   FROM memos 
-  LEFT JOIN user u ON u.id = memos.user_id`;
+  LEFT JOIN user u ON u.id = memos.user_id WHERE memos.user_id = ?`;
+
+  const params = [`${userId}`];
+  if (keyword) {
+    query += ` WHERE LOWER(memos.title) LIKE ? OR
+LOWER(memos.content) LIKE ?`;
+    const keywordParam = `%${keyword}%`;
+    params.push(keywordParam, keywordParam);
+  }
+  query += ` ORDER BY memos.id DESC LIMIT ? OFFSET ?`;
+  params.push(`${size}`, `${offset}`);
+  console.log(size, offset);
+  return await pool.query(query, params);
+};
+
+exports.openIndex = async (page, size, keyword) => {
+  const offset = (page - 1) * size;
+  let query = `SELECT * 
+  FROM memos 
+  LEFT JOIN user u ON u.id = memos.user_id WHERE isOpened = true`;
 
   const params = [];
   if (keyword) {
