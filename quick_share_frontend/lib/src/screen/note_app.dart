@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quick_share_frontend/src/screen/auth/Logout.dart';
 import 'package:quick_share_frontend/src/screen/memo/Create.dart';
 
 import 'feed/index.dart';
@@ -14,14 +15,14 @@ final List<BottomNavigationBarItem> myTabs = [
   ),
   BottomNavigationBarItem(
     icon: Icon(Icons.settings),
-    label: '설정',
+    label: '로그아웃',
   ),
 ];
 
 final List<Widget> myTabItems = [
   Center(child: Create()), // 메모 작성
   FeedIndex(),
-  Center(child: Text('설정')), // 설정 탭
+  Center(child: LogoutScreen()), // 설정 탭
 ];
 
 class NoteApp extends StatefulWidget {

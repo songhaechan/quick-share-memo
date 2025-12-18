@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/get_instance.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:intl/intl.dart'; // 날짜 포맷을 위한 패키지 추가
 import 'package:quick_share_frontend/src/screen/feed/index.dart';
+import 'package:quick_share_frontend/src/screen/memo/Edit.dart';
+import 'package:quick_share_frontend/src/controller/MemoController.dart';
+import 'package:quick_share_frontend/src/screen/note_app.dart';
 
 class Show extends StatefulWidget {
+  final int id; // 메모 ID 추가
   final String title;
   final String content;
   final String createdAt; // 서버에서 받은 날짜를 매개변수로 전달
 
-  Show({required this.title, required this.content, required this.createdAt});
-
+  Show({
+    required this.id, // ID 받기
+    required this.title,
+    required this.content,
+    required this.createdAt,
+  });
   @override
   _ShowState createState() => _ShowState();
 }
@@ -18,6 +27,8 @@ class Show extends StatefulWidget {
 class _ShowState extends State<Show> {
   bool isMenuVisible = false;
   GlobalKey _menuButtonKey = GlobalKey();
+
+  final memoController = Get.put(MemoController());
 
   void toggleMenu() {
     setState(() {
@@ -52,15 +63,113 @@ class _ShowState extends State<Show> {
               child: Column(
                 children: [
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      setState(() {
+                        isMenuVisible = false;
+                      });
+                      _removeOverlay();
+
+                      Get.to(() => EditMemo(
+                            id: widget.id,
+                            title: widget.title,
+                            content: widget.content,
+                          ));
+                    },
                     child: Text('수정하기', style: TextStyle(color: Colors.black)),
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      // 메뉴 닫기
+                      setState(() {
+                        isMenuVisible = false;
+                      });
+                      _removeOverlay();
+
+                      // 공유 확인 다이얼로그 표시
+                      final confirm = await showDialog<bool>(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text('공유 확인'),
+                            content: Text('이 메모를 공유하시겠습니까?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context, false); // 취소
+                                },
+                                child: Text('취소'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context, true); // 확인
+                                },
+                                child: Text('공유',
+                                    style: TextStyle(color: Colors.blue)),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+
+                      // 사용자가 공유를 확인한 경우 공유 요청 실행
+                      if (confirm == true) {
+                        final result =
+                            await memoController.shareMemo(widget.id);
+                        print(result);
+                        if (result) {
+                          Get.snackbar(
+                            '성공',
+                            '메모가 공유되었습니다.',
+                            snackPosition: SnackPosition.BOTTOM,
+                          );
+                          await Get.to(() => NoteApp);
+                        }
+                      }
+                    },
                     child: Text('공유하기', style: TextStyle(color: Colors.black)),
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      // 메뉴 닫기
+                      setState(() {
+                        isMenuVisible = false;
+                      });
+                      _removeOverlay();
+
+                      // 삭제 확인 다이얼로그 표시
+                      final confirm = await showDialog<bool>(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text('삭제 확인'),
+                            content: Text('정말로 삭제하시겠습니까?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context, false); // 취소
+                                },
+                                child: Text('취소'),
+                              ),
+                              TextButton(
+                                onPressed: () async {
+                                  Navigator.pop(context, true); // 확인
+                                  final result = await memoController
+                                      .deleteMemo(widget.id);
+                                  print(result);
+                                  if (result) {
+                                    Get.to(() => NoteApp());
+                                  }
+                                },
+                                child: Text('삭제',
+                                    style: TextStyle(color: Colors.red)),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+
+                      if (confirm == true) {}
+                    },
                     child: Text('삭제하기', style: TextStyle(color: Colors.red)),
                   ),
                 ],
@@ -94,7 +203,7 @@ class _ShowState extends State<Show> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
-            Get.to(() => FeedIndex());
+            Get.back(); // 현재 화면을 종료하고 이전 화면으로 돌아갑니다.
           },
         ),
         title: Row(

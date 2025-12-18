@@ -16,13 +16,14 @@ exports.getAllMemos = async (userId) => {
 exports.getMemoById = async (id) => {
   const query = `SELECT * FROM memos WHERE id = ?`;
   const result = await pool.query(query, [id]);
-  return result.length > 0 ? result[0] : null;
+  return result.length > 0 ? result : null;
 };
 
 // Memo 수정
 exports.updateMemo = async (id, title, content) => {
   const query = `UPDATE memos SET title = ?, content = ? WHERE id = ?`;
-  const result = await pool.query(query, [title, content, id]);
+  const result = await pool.query(query, [title, content, `${id}`]);
+  console.log(result);
   return result.affectedRows > 0; // 수정된 행의 수로 성공 여부 판단
 };
 
@@ -34,31 +35,9 @@ exports.deleteMemo = async (id) => {
 };
 
 exports.shareMemo = async (id) => {
-  const query = `UPDATE memos SET isOpened = true`;
-  const result = await pool.query(query);
+  const query = `UPDATE memos SET isOpened = true WHERE id = ?`;
+  console.log(id);
+  const result = await pool.query(query, [id]);
+  console.log(result);
   return result.affectedRows > 0; // 삭제된 행의 수로 성공 여부 판단
-};
-
-// Memo 공유
-exports.shareMemo = async (memoId, sharedToIds) => {
-  const query = `
-    INSERT INTO memo_shares (memo_id, shared_to) 
-    VALUES (?, ?)
-  `;
-  const connection = await pool.getConnection();
-  try {
-    await connection.beginTransaction();
-
-    for (const sharedTo of sharedToIds) {
-      await connection.query(query, [memoId, sharedTo]);
-    }
-
-    await connection.commit();
-    return true;
-  } catch (error) {
-    await connection.rollback();
-    throw error;
-  } finally {
-    connection.release();
-  }
 };

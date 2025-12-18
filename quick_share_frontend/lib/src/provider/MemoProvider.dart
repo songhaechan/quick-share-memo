@@ -22,6 +22,7 @@ class MemoProvider extends Provider {
     // 'T'를 공백으로 바꾸고, 밀리초 이후 부분을 제거
     createdAt = createdAt.substring(
         0, 19); // "2025-01-21T15:45:12.638104" -> "2025-01-21 15:45:12"
+
     // 날짜도 body에 추가합니다.
     final Map<String, dynamic> body = {
       'title': title,
@@ -46,9 +47,19 @@ class MemoProvider extends Provider {
     return response.body;
   }
 
-  // // Memo 삭제 (DELETE)
-  // Future<Map> delete(int id) async {
-  //   final response = await delete('/api/memo/$id');
-  //   return response.body;
-  // }
+  // Memo 삭제 (DELETE)
+
+  Future<Map> deleteMemo(int id) async {
+    final response = await delete('/api/memo/$id');
+    return response.body;
+  }
+
+  // Memo 공유 (PUT)
+  Future<Map> share(int id) async {
+    final Map<String, dynamic> body = {
+      'isOpened': true,
+    };
+    final response = await put('/api/memo/$id/share', body);
+    return response.body;
+  }
 }

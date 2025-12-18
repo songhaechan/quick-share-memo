@@ -3,12 +3,58 @@ exports.index = async (req, res) => {
   const { page = 1, size = 10, keyword = "" } = req.query;
   const userId = req.user.id;
   const trimmedKeyword = keyword.trim().toLowerCase();
-  const items = await repository.index(page, size, trimmedKeyword);
+  const items = await repository.index(page, size, trimmedKeyword, userId);
+  const modifiedItems = items.map((item) => ({
+    ...item,
+  }));
+  console.log(items);
+  res.json({ result: "ok", data: modifiedItems });
+};
+
+exports.openIndex = async (req, res) => {
+  const { page = 1, size = 10, keyword = "" } = req.query;
+  const trimmedKeyword = keyword.trim().toLowerCase();
+  const items = await repository.openIndex(page, size, trimmedKeyword);
   const modifiedItems = items.map((item) => ({
     ...item,
   }));
   res.json({ result: "ok", data: modifiedItems });
 };
+
+exports.privateSearch = async (req, res) => {
+  const { page = 1, size = 10, keyword = "" } = req.query;
+  const userId = req.user.id;
+  const trimmedKeyword = keyword.trim().toLowerCase();
+  const items = await repository.privateSearch(
+    page,
+    size,
+    trimmedKeyword,
+    userId
+  );
+  const modifiedItems = items.map((item) => ({
+    ...item,
+  }));
+  console.log(items);
+  res.json({ result: "ok", data: modifiedItems });
+};
+
+exports.sharedSearch = async (req, res) => {
+  const { page = 1, size = 10, keyword = "" } = req.query;
+  const userId = req.user.id;
+  const trimmedKeyword = keyword.trim().toLowerCase();
+  const items = await repository.sharedSearch(
+    page,
+    size,
+    trimmedKeyword,
+    userId
+  );
+  const modifiedItems = items.map((item) => ({
+    ...item,
+  }));
+  console.log(items);
+  res.json({ result: "ok", data: modifiedItems });
+};
+
 exports.store = async (req, res) => {
   const body = req.body;
   const user = req.user;

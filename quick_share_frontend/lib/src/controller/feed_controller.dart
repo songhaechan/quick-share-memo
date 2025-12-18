@@ -16,13 +16,17 @@ class FeedController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchFeedData(); // 초기 데이터 로드
+    feedIndex(); // 초기 데이터 로드
   }
 
   // 개인/공유 메모 토글
   void toggleMemoList() {
     isPersonalMemo.value = !isPersonalMemo.value;
-    filterFeeds(searchQuery.value);
+    if (isPersonalMemo.value == true) {
+      feedIndex();
+    } else {
+      feedIndexOpen();
+    }
   }
 
   // 정렬
@@ -35,46 +39,32 @@ class FeedController extends GetxController {
     }
   }
 
-  // 데이터 가져오기
-  void fetchFeedData() async {
-    isLoading.value = true;
-    try {
-      // 테스트 데이터
-      originalFeedList.assignAll([
-        FeedModel.parse({
-          'id': 1,
-          'date': '2025-01-01',
-          'title': '테스트 메모 1',
-          'content': '이것은 테스트 메모 1의 내용입니다.',
-          'is_personal': 1,
-        }),
-        FeedModel.parse({
-          'id': 2,
-          'date': '2025-01-02',
-          'title': '공유된 메모 1',
-          'content': '공유된 테스트 메모 1의 내용입니다.',
-          'is_personal': 0,
-        }),
-        FeedModel.parse({
-          'id': 3,
-          'date': '2025-02-01',
-          'title': '테스트 메모 2',
-          'content': '이것은 테스트 메모 2의 내용입니다.',
-          'is_personal': 1,
-        }),
-        FeedModel.parse({
-          'id': 4,
-          'date': '2025-01-07',
-          'title': '공유된 메모 2',
-          'content': '공유된 테스트 메모 2의 내용입니다.',
-          'is_personal': 0,
-        }),
-      ]);
-      filterFeeds(''); // 초기 필터링
-    } catch (e) {
-      print('데이터 로드 실패: $e');
-    } finally {
-      isLoading.value = false;
+  void search(String keyword) async {
+    if (isPersonalMemo.value) {
+      Map json = await feedProvider.searchPrivate(keyword);
+      if (json['data'] == null || json['data'] is! List) {
+        print('Invalid data format: ${json['data']}');
+        return;
+      }
+
+      List<FeedModel> tmp = (json['data'] as List)
+          .map((item) => FeedModel.parse(item as Map<String, dynamic>))
+          .toList();
+
+      feedList.assignAll(tmp);
+    } else {
+      feedProvider.searchShared(keyword);
+      Map json = await feedProvider.searchPrivate(keyword);
+      if (json['data'] == null || json['data'] is! List) {
+        print('Invalid data format: ${json['data']}');
+        return;
+      }
+
+      List<FeedModel> tmp = (json['data'] as List)
+          .map((item) => FeedModel.parse(item as Map<String, dynamic>))
+          .toList();
+
+      feedList.assignAll(tmp);
     }
   }
 
@@ -83,23 +73,55 @@ class FeedController extends GetxController {
     searchQuery.value = query;
     if (query.isEmpty) {
       feedList.assignAll(
-        originalFeedList.where((memo) =>
+        feedList.where((memo) =>
             isPersonalMemo.value ? memo.isPersonal : !memo.isPersonal),
       );
     } else {
       feedList.assignAll(
-        originalFeedList.where((memo) =>
+        feedList.where((memo) =>
             (isPersonalMemo.value ? memo.isPersonal : !memo.isPersonal) &&
             memo.title.toLowerCase().contains(query.toLowerCase())),
       );
     }
   }
 
+  Future<void> feedIndexOpen({int page = 1}) async {
+    try {
+      Map json = await feedProvider.getOpenList(page: page);
+
+      if (json['data'] == null || json['data'] is! List) {
+        print('Invalid data format: ${json['data']}');
+        return;
+      }
+
+      List<FeedModel> tmp = (json['data'] as List)
+          .map((item) => FeedModel.parse(item as Map<String, dynamic>))
+          .toList();
+
+      (page == 1) ? feedList.assignAll(tmp) : feedList.addAll(tmp);
+    } catch (e, stackTrace) {
+      print('Error in feedIndex: $e');
+      print(stackTrace);
+    }
+  }
+
   Future<void> feedIndex({int page = 1}) async {
-    Map json = await feedProvider.getList(page: page);
-    List<FeedModel> tmp =
-        json['data'].map((item) => FeedModel.parse(item)).toList();
-    // 첫 페이지면 목록을 교체하고, 아니면 기존 목록에 추가
-    (page == 1) ? feedList.assignAll(tmp) : feedList.addAll(tmp);
+    try {
+      Map json = await feedProvider.getList(page: page);
+
+      if (json['data'] == null || json['data'] is! List) {
+        print('Invalid data format: ${json['data']}');
+        return;
+      }
+
+      List<FeedModel> tmp = (json['data'] as List)
+          .map((item) => FeedModel.parse(item as Map<String, dynamic>))
+          .toList();
+
+      (page == 1) ? feedList.assignAll(tmp) : feedList.addAll(tmp);
+    } catch (e, stackTrace) {
+      print('Error in feedIndex: $e');
+      print(stackTrace);
+    }
   }
 }
